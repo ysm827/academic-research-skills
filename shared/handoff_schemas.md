@@ -372,6 +372,12 @@ score_trajectory: {
 | `revision_roadmap` | list[RoadmapItem] | Prioritized list of required changes |
 | `confidence_score` | integer | 0-100 editorial confidence |
 
+### Optional Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `judge_record` | object | #539 judge transparency: `{verification_judge, round1_panel_provenance, cross_model_pass: "ran"|"partial"|"not_configured"|"failed", cross_model_items_judged?: int, cross_model_items_total?: int (required when partial), cross_model_id?, failure_reason?, prompt_rubric_surfaces, evidence_seen, judging_budget_note}`. `round1_panel_provenance` is copied seat-level from the #540 Review Panel Provenance block ("unknown (provenance block absent)" when absent — a singular revision-driving judge is not well-defined for a mixed-family panel). Emitted by re-review (Stage 3'); absent = pre-#539 report. External motivation: Ren et al. arXiv:2607.13104 §8.1.2. |
+
 ### ReviewerReport Object
 
 | Field | Type | Description |
@@ -781,6 +787,8 @@ See `shared/style_calibration_protocol.md` for full consumption rules and confli
 ---
 
 ### Schema 11: R&R Traceability Matrix
+
+> #539 optional per-row fields: `cross_model_verdict` (FULLY_ADDRESSED / PARTIALLY_ADDRESSED / NOT_ADDRESSED / MADE_WORSE; present only on `diverges`/`agree` rows) + `cross_model_status` (`agree` / `diverges` / `unavailable` / `not_configured`). Scope: the independent pass evaluates PRIORITY 1 rows only — #539-era Priority 1 rows ALWAYS carry `cross_model_status` (`not_configured` when cross-model is not active); Priority 2/3 rows omit both fields (not evaluated). A Priority 1 row with neither field = pre-#539.
 
 **Producer (multi-stage, Kong A1 / v3.11)**:
 - `concern_id` / `priority` / `original_comment` / `reviewer_source`: academic-paper-reviewer (first-round review)
